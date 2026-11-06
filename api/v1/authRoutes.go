@@ -3,14 +3,15 @@ package v1
 import (
 	"net/http"
 
+	"go-produk/internal/config"
 	"go-produk/internal/database"
 	"go-produk/internal/handlers"
 	"go-produk/internal/services"
 )
 
 // AuthRoutes mendaftarkan route autentikasi ke mux
-func AuthRoutes(mux *http.ServeMux, authService *services.AuthService, redisClient *database.RedisClient, supabaseURL, redirectURL string) {
-	authHandler := handlers.NewAuthHandler(authService, redisClient, supabaseURL, redirectURL)
+func AuthRoutes(mux *http.ServeMux, authService *services.AuthService, redisClient *database.RedisClient, cfg *config.Config) {
+	authHandler := handlers.NewAuthHandler(authService, redisClient, cfg.Cookie, cfg.FrontendURL, cfg.SupabaseURL, cfg.GoogleRedirectURL)
 
 	// Login
 	mux.HandleFunc("POST /api/v1/auth/login", authHandler.Login)

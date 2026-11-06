@@ -7,12 +7,13 @@ import (
 	"go-produk/internal/handlers"
 	"go-produk/internal/middlewares"
 	"go-produk/internal/services"
+	"go-produk/pkg/cookie"
 	"go-produk/pkg/token"
 )
 
-func UserProjectRoutes(mux *http.ServeMux, service *services.UserProjectService, tokenMgr *token.Manager, redisClient *database.RedisClient) {
+func UserProjectRoutes(mux *http.ServeMux, service *services.UserProjectService, tokenMgr *token.Manager, redisClient *database.RedisClient, cookies cookie.Settings) {
 	h := handlers.NewUserProjectHandler(service)
-	auth := middlewares.AuthMiddleware(tokenMgr, redisClient)
+	auth := middlewares.AuthMiddleware(tokenMgr, redisClient, cookies)
 
 	mux.Handle("POST /api/v1/projects", auth(http.HandlerFunc(h.Create)))
 	mux.Handle("GET /api/v1/projects", auth(http.HandlerFunc(h.List)))

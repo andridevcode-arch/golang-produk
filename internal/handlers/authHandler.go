@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"go-produk/internal/database"
 	"go-produk/internal/dto"
 	"go-produk/internal/services"
+	"go-produk/pkg/cookie"
 	"go-produk/pkg/response"
 )
 
@@ -17,35 +17,22 @@ import (
 type AuthHandler struct {
 	authService *services.AuthService
 	redisClient *database.RedisClient
+	cookies     cookie.Settings
+	frontendURL string
 	supabaseURL string
 	redirectURL string
 }
 
 // NewAuthHandler membuat instance AuthHandler baru
-func NewAuthHandler(authService *services.AuthService, redisClient *database.RedisClient, supabaseURL, redirectURL string) *AuthHandler {
+func NewAuthHandler(authService *services.AuthService, redisClient *database.RedisClient, cookies cookie.Settings, frontendURL, supabaseURL, redirectURL string) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
 		redisClient: redisClient,
+		cookies:     cookies,
+		frontendURL: frontendURL,
 		supabaseURL: supabaseURL,
 		redirectURL: redirectURL,
 	}
-}
-
-// getBearerToken mengambil token dari header Authorization: Bearer <token>
-func getBearerToken(r *http.Request) (string, error) {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		return "", fmt.Errorf("authorization header kosong")
-	}
-	parts := strings.SplitN(authHeader, " ", 2)
-	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-		return "", fmt.Errorf("format authorization header salah, gunakan: Bearer <token>")
-	}
-	tokenStr := strings.TrimSpace(parts[1])
-	if tokenStr == "" {
-		return "", fmt.Errorf("token kosong")
-	}
-	return tokenStr, nil
 }
 
 // Register menangani POST /api/v1/auth/register
@@ -56,11 +43,14 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := h.authService.Register(r.Context(), req)
+	resp, token, err := h.authService.Register(r.Context(), req)
 	if err != nil {
 		response.RespondBadRequest(w, err.Error())
 		return
 	}
+
+	// Token dikirim lewat HttpOnly cookie, bukan lewat body response
+	h.cookies.Set(w, token, resp.ExpiresIn)
 
 	response.RespondCreated(w, resp)
 }
@@ -73,11 +63,14 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := h.authService.Login(r.Context(), req)
+	resp, token, err := h.authService.Login(r.Context(), req)
 	if err != nil {
 		response.RespondUnauthorized(w, err.Error())
 		return
 	}
+
+	// Token dikirim lewat HttpOnly cookie, bukan lewat body response
+	h.cookies.Set(w, token, resp.ExpiresIn)
 
 	response.RespondSuccess(w, resp)
 }
@@ -102,22 +95,25 @@ func (h *AuthHandler) GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Panggil service untuk login dengan token Supabase
-	resp, err := h.authService.LoginWithSupabase(r.Context(), tokenStr)
+	resp, token, err := h.authService.LoginWithSupabase(r.Context(), tokenStr)
 	if err != nil {
 		response.RespondUnauthorized(w, err.Error())
 		return
 	}
 
-	response.RespondSuccess(w, resp)
+	// Token aplikasi dikirim lewat HttpOnly cookie, lalu redirect ke frontend
+	h.cookies.Set(w, token, resp.ExpiresIn)
+
+	http.Redirect(w, r, h.frontendURL, http.StatusFound)
 }
 
 // Logout menangani POST /api/v1/auth/logout
 // Token divalidasi dan dimasukkan ke Redis blacklist agar tidak dapat digunakan lagi
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	// Ambil token dari header
-	tokenStr, err := getBearerToken(r)
-	if err != nil {
-		response.RespondBadRequest(w, err.Error())
+	// Ambil token dari HttpOnly cookie
+	tokenStr := h.cookies.FromRequest(r)
+	if tokenStr == "" {
+		response.RespondUnauthorized(w, "cookie autentikasi tidak ditemukan")
 		return
 	}
 
@@ -150,6 +146,9 @@ func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	// Hapus HttpOnly cookie autentikasi
+	h.cookies.Clear(w)
 
 	// Logout berhasil
 	response.RespondSuccess(w, map[string]interface{}{

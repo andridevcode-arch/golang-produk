@@ -1,6 +1,7 @@
 package config
 
 import (
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -60,4 +61,31 @@ func getEnvAsBool(key string, fallback bool) bool {
 		}
 	}
 	return fallback
+}
+
+// parseSameSite mengubah string env menjadi http.SameSite.
+// Nilai yang didukung: "none", "lax", "strict". Default: none.
+func parseSameSite(v string) http.SameSite {
+	switch strings.ToLower(strings.TrimSpace(v)) {
+	case "lax":
+		return http.SameSiteLaxMode
+	case "strict":
+		return http.SameSiteStrictMode
+	default:
+		return http.SameSiteNoneMode
+	}
+}
+
+// splitAndTrim memisahkan string dengan koma, memangkas spasi,
+// dan membuang entri yang kosong.
+func splitAndTrim(v string) []string {
+	parts := strings.Split(v, ",")
+	result := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			result = append(result, p)
+		}
+	}
+	return result
 }

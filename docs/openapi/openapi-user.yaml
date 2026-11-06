@@ -85,7 +85,7 @@ paths:
       summary: Logout user
       operationId: logoutUser
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       responses:
         "200":
           description: Logout berhasil
@@ -140,7 +140,7 @@ paths:
       summary: Get current user profile
       operationId: getUserProfile
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       responses:
         "200":
           description: User profile
@@ -157,7 +157,7 @@ paths:
       summary: Update user profile
       operationId: updateUserProfile
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -292,7 +292,7 @@ paths:
       summary: Create new project
       operationId: createProject
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -317,7 +317,7 @@ paths:
       summary: List user projects
       operationId: listProjects
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -338,7 +338,7 @@ paths:
       summary: Get project detail
       operationId: getProjectByID
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -359,7 +359,7 @@ paths:
       summary: Update project
       operationId: updateProject
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       requestBody:
@@ -388,7 +388,7 @@ paths:
       summary: Delete project
       operationId: deleteProject
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -406,7 +406,7 @@ paths:
       summary: Update project status
       operationId: updateProjectStatus
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       requestBody:
@@ -464,11 +464,11 @@ paths:
 
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: JWT access token
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+      description: JWT access token disimpan pada HttpOnly cookie `access_token`
 
   parameters:
     IDParam:

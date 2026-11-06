@@ -16,8 +16,8 @@ type LoginRequest struct {
 }
 
 // LoginResponse adalah response untuk login dan register
+// Token JWT tidak lagi dikirim di body, melainkan lewat HttpOnly cookie
 type LoginResponse struct {
-	User        models.User `json:"user"`
-	AccessToken string      `json:"access_token"`
-	ExpiresIn   int         `json:"expires_in"`
+	User      models.User `json:"user"`
+	ExpiresIn int         `json:"expires_in"`
 }

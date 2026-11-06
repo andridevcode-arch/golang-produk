@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"net/http"
 	"strings"
 )
 
@@ -28,6 +29,18 @@ func (c *Config) Validate() error {
 	// JWT config validation
 	if strings.TrimSpace(c.JWTSecret) == "" {
 		return errors.New("JWT_SECRET wajib diisi")
+	}
+
+	// Cookie config validation
+	if c.Cookie.SameSite == http.SameSiteNoneMode && !c.Cookie.Secure {
+		return errors.New("COOKIE_SAME_SITE=none mewajibkan COOKIE_SECURE=true")
+	}
+
+	// CORS config validation
+	for _, origin := range c.AllowedOrigins {
+		if origin == "*" {
+			return errors.New("CORS_ALLOWED_ORIGINS tidak boleh memakai wildcard karena kredensial diaktifkan")
+		}
 	}
 
 	return nil

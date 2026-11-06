@@ -15,22 +15,22 @@ func Routes(mux *http.ServeMux, authService *services.AuthService, userService *
 	HealthRoutes(mux)
 
 	// Auth (publik, tidak butuh auth)
-	AuthRoutes(mux, authService, redisClient, cfg.SupabaseURL, cfg.GoogleRedirectURL)
+	AuthRoutes(mux, authService, redisClient, cfg)
 
 	// User (butuh auth)
-	UserRoutes(mux, userService, tokenMgr, redisClient)
+	UserRoutes(mux, userService, tokenMgr, redisClient, cfg.Cookie)
 
 	// Category
-	CategoryRoutes(mux, catService, tokenMgr, redisClient)
+	CategoryRoutes(mux, catService, tokenMgr, redisClient, cfg.Cookie)
 
 	// Product
-	ProductRoutes(mux, productService, tokenMgr, redisClient)
+	ProductRoutes(mux, productService, tokenMgr, redisClient, cfg.Cookie)
 
 	// Template
-	TemplateRoutes(mux, templateService, tokenMgr, redisClient)
-	TemplateVersionRoutes(mux, templateVersionService, tokenMgr, redisClient)
+	TemplateRoutes(mux, templateService, tokenMgr, redisClient, cfg.Cookie)
+	TemplateVersionRoutes(mux, templateVersionService, tokenMgr, redisClient, cfg.Cookie)
 
 	// User project
-	UserProjectRoutes(mux, userProjectService, tokenMgr, redisClient)
-	PublishedPageRoutes(mux, publishedPageService, tokenMgr, redisClient)
+	UserProjectRoutes(mux, userProjectService, tokenMgr, redisClient, cfg.Cookie)
+	PublishedPageRoutes(mux, publishedPageService, tokenMgr, redisClient, cfg.Cookie)
 }

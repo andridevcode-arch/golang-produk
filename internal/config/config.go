@@ -2,6 +2,8 @@ package config
 
 import (
 	"time"
+
+	"go-produk/pkg/cookie"
 )
 
 // Config adalah struct utama yang menampung semua konfigurasi aplikasi
@@ -15,6 +17,9 @@ type Config struct {
 	SupabaseURL          string
 	SupabaseServiceRoleKey string
 	GoogleRedirectURL    string
+	Cookie               cookie.Settings
+	AllowedOrigins       []string
+	FrontendURL          string
 }
 
 // AppConfig berisi konfigurasi aplikasi umum
@@ -55,6 +60,8 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 
+	jwtExpiresIn := getEnvAsDuration("JWT_EXPIRES_IN", "1d")
+
 	cfg := &Config{
 		App: AppConfig{
 			Environment: getEnv("APP_ENV", "development"),
@@ -79,10 +86,20 @@ func Load() (*Config, error) {
 			Timeout:     getEnvAsDuration("MONGO_TIMEOUT", "10s"),
 		},
 		JWTSecret:            getEnv("JWT_SECRET", ""),
-		JWTExpiresIn:         getEnvAsDuration("JWT_EXPIRES_IN", "1d"),
+		JWTExpiresIn:         jwtExpiresIn,
 		SupabaseURL:          getEnv("SUPABASE_URL", ""),
 		SupabaseServiceRoleKey: getEnv("SUPABASE_SERVICE_ROLE_KEY", ""),
 		GoogleRedirectURL:    getEnv("GOOGLE_REDIRECT_URL", ""),
+		Cookie: cookie.Settings{
+			Name:     getEnv("COOKIE_NAME", "access_token"),
+			Path:     getEnv("COOKIE_PATH", "/"),
+			Domain:   getEnv("COOKIE_DOMAIN", ""),
+			Secure:   getEnvAsBool("COOKIE_SECURE", true),
+			SameSite: parseSameSite(getEnv("COOKIE_SAME_SITE", "none")),
+			MaxAge:   int(jwtExpiresIn.Seconds()),
+		},
+		AllowedOrigins: splitAndTrim(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
+		FrontendURL:    getEnv("APP_FRONTEND_URL", "http://localhost:3000"),
 	}
 
 	if err := cfg.Validate(); err != nil {

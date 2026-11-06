@@ -61,7 +61,7 @@ paths:
       summary: Logout admin
       operationId: adminLogout
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       responses:
         "200":
           description: Logout berhasil
@@ -79,7 +79,7 @@ paths:
       summary: List all categories
       operationId: adminListCategories
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -101,7 +101,7 @@ paths:
       summary: Create new category
       operationId: createCategory
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -129,7 +129,7 @@ paths:
       summary: Get category by ID
       operationId: adminGetCategoryByID
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -152,7 +152,7 @@ paths:
       summary: Update category
       operationId: updateCategory
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       requestBody:
@@ -183,7 +183,7 @@ paths:
       summary: Delete category
       operationId: deleteCategory
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -203,7 +203,7 @@ paths:
       summary: List all products
       operationId: adminListProducts
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -230,7 +230,7 @@ paths:
       summary: Create new product
       operationId: createProduct
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -258,7 +258,7 @@ paths:
       summary: Get product by ID
       operationId: adminGetProductByID
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -281,7 +281,7 @@ paths:
       summary: Update product
       operationId: updateProduct
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       requestBody:
@@ -312,7 +312,7 @@ paths:
       summary: Delete product
       operationId: deleteProduct
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -332,7 +332,7 @@ paths:
       summary: List all templates
       operationId: adminListTemplates
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -354,7 +354,7 @@ paths:
       summary: Create new template
       operationId: createTemplate
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -382,7 +382,7 @@ paths:
       summary: Get template by ID
       operationId: adminGetTemplateByID
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -405,7 +405,7 @@ paths:
       summary: Update template
       operationId: updateTemplate
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       requestBody:
@@ -436,7 +436,7 @@ paths:
       summary: Delete template
       operationId: deleteTemplate
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -456,7 +456,7 @@ paths:
       summary: List template versions
       operationId: adminListTemplateVersions
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -483,7 +483,7 @@ paths:
       summary: Create template version
       operationId: createTemplateVersion
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       requestBody:
         required: true
         content:
@@ -511,7 +511,7 @@ paths:
       summary: Get template version by ID
       operationId: adminGetTemplateVersionByID
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -534,7 +534,7 @@ paths:
       summary: Update template version
       operationId: updateTemplateVersion
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       requestBody:
@@ -565,7 +565,7 @@ paths:
       summary: Delete template version
       operationId: deleteTemplateVersion
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -585,7 +585,7 @@ paths:
       summary: List all user projects
       operationId: adminListUserProjects
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/PageParam"
         - $ref: "#/components/parameters/LimitParam"
@@ -618,7 +618,7 @@ paths:
       summary: Get user project detail
       operationId: adminGetUserProjectByID
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -641,7 +641,7 @@ paths:
       summary: Delete user project
       operationId: adminDeleteUserProject
       security:
-        - bearerAuth: []
+        - CookieAuth: []
       parameters:
         - $ref: "#/components/parameters/IDParam"
       responses:
@@ -656,11 +656,11 @@ paths:
 
 components:
   securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: JWT access token (admin user only)
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+      description: JWT access token (admin user only) disimpan pada HttpOnly cookie `access_token`
 
   parameters:
     IDParam:

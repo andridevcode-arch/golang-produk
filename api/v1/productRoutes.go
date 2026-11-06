@@ -7,14 +7,15 @@ import (
 	"go-produk/internal/handlers"
 	"go-produk/internal/middlewares"
 	"go-produk/internal/services"
+	"go-produk/pkg/cookie"
 	"go-produk/pkg/token"
 )
 
 // ProductRoutes mendaftarkan route products ke mux
-func ProductRoutes(mux *http.ServeMux, productService *services.ProductService, tokenMgr *token.Manager, redisClient *database.RedisClient) {
+func ProductRoutes(mux *http.ServeMux, productService *services.ProductService, tokenMgr *token.Manager, redisClient *database.RedisClient, cookies cookie.Settings) {
 	handler := handlers.NewProductHandler(productService)
 
-	authMiddleware := middlewares.AuthMiddleware(tokenMgr, redisClient)
+	authMiddleware := middlewares.AuthMiddleware(tokenMgr, redisClient, cookies)
 	adminMiddleware := middlewares.RequireAdmin()
 
 	// List products (publik)

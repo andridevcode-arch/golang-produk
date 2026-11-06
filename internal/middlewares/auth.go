@@ -3,9 +3,9 @@ package middlewares
 import (
 	"context"
 	"net/http"
-	"strings"
 
 	"go-produk/internal/database"
+	"go-produk/pkg/cookie"
 	"go-produk/pkg/response"
 	"go-produk/pkg/token"
 )
@@ -46,26 +46,15 @@ func GetRawToken(r *http.Request) string {
 	return val.(string)
 }
 
-// AuthMiddleware adalah middleware untuk validasi JWT token dan pengecekan blacklist di Redis
-func AuthMiddleware(tokenMgr *token.Manager, redisClient *database.RedisClient) func(http.Handler) http.Handler {
+// AuthMiddleware adalah middleware untuk validasi JWT token dari HttpOnly cookie
+// dan pengecekan blacklist di Redis
+func AuthMiddleware(tokenMgr *token.Manager, redisClient *database.RedisClient, cookies cookie.Settings) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// Ambil token dari header Authorization: Bearer <token>
-			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
-				response.RespondUnauthorized(w, "authorization header kosong")
-				return
-			}
-
-			parts := strings.SplitN(authHeader, " ", 2)
-			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-				response.RespondUnauthorized(w, "format authorization header salah, gunakan: Bearer <token>")
-				return
-			}
-
-			tokenStr := strings.TrimSpace(parts[1])
+			// Ambil token dari HttpOnly cookie
+			tokenStr := cookies.FromRequest(r)
 			if tokenStr == "" {
-				response.RespondUnauthorized(w, "token kosong")
+				response.RespondUnauthorized(w, "cookie autentikasi tidak ditemukan")
 				return
 			}
 

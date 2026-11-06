@@ -77,7 +77,7 @@ func generatePaths() map[string]interface{} {
 	authLogoutPost["summary"] = "Logout user"
 	authLogoutPost["description"] = "Logout and invalidate token"
 	authLogoutSec := make([]interface{}, 1)
-	authLogoutSec[0] = map[string][]string{"BearerAuth": {}}
+	authLogoutSec[0] = map[string][]string{"CookieAuth": {}}
 	authLogoutPost["security"] = authLogoutSec
 	authLogoutResp := make(map[string]interface{})
 	authLogoutResp["200"] = map[string]string{"description": "Logged out"}
@@ -89,7 +89,7 @@ func generatePaths() map[string]interface{} {
 	usersMeGet["summary"] = "Get current user profile"
 	usersMeGet["description"] = "Get profile of authenticated user"
 	usersMeSec := make([]interface{}, 1)
-	usersMeSec[0] = map[string][]string{"BearerAuth": {}}
+	usersMeSec[0] = map[string][]string{"CookieAuth": {}}
 	usersMeGet["security"] = usersMeSec
 	usersMeResp := make(map[string]interface{})
 	usersMeResp["200"] = map[string]interface{}{
@@ -139,7 +139,7 @@ func generatePaths() map[string]interface{} {
 	categoriesPost := make(map[string]interface{})
 	categoriesPost["summary"] = "Create category (Admin only)"
 	categoriesPost["description"] = "Create a new category"
-	categoriesPost["security"] = []interface{}{map[string][]string{"BearerAuth": {}}}
+	categoriesPost["security"] = []interface{}{map[string][]string{"CookieAuth": {}}}
 	categoriesPostBody := make(map[string]interface{})
 	categoriesPostBody["required"] = true
 	categoriesPostContent := make(map[string]interface{})
@@ -169,7 +169,7 @@ func generatePaths() map[string]interface{} {
 	catIdPut := make(map[string]interface{})
 	catIdPut["summary"] = "Update category (Admin only)"
 	catIdPut["description"] = "Update category by ID"
-	catIdPut["security"] = []interface{}{map[string][]string{"BearerAuth": {}}}
+	catIdPut["security"] = []interface{}{map[string][]string{"CookieAuth": {}}}
 	catIdPut["parameters"] = catIdParams
 	catIdPutBody := make(map[string]interface{})
 	catIdPutBody["required"] = true
@@ -188,7 +188,7 @@ func generatePaths() map[string]interface{} {
 	catIdDel := make(map[string]interface{})
 	catIdDel["summary"] = "Delete category (Admin only)"
 	catIdDel["description"] = "Delete category by ID"
-	catIdDel["security"] = []interface{}{map[string][]string{"BearerAuth": {}}}
+	catIdDel["security"] = []interface{}{map[string][]string{"CookieAuth": {}}}
 	catIdDel["parameters"] = catIdParams
 	catIdDelResp := make(map[string]interface{})
 	catIdDelResp["204"] = map[string]string{"description": "Category deleted"}
@@ -213,7 +213,7 @@ func generatePaths() map[string]interface{} {
 	productsPost := make(map[string]interface{})
 	productsPost["summary"] = "Create product (Admin only)"
 	productsPost["description"] = "Create a new product"
-	productsPost["security"] = []interface{}{map[string][]string{"BearerAuth": {}}}
+	productsPost["security"] = []interface{}{map[string][]string{"CookieAuth": {}}}
 	productsPostBody := make(map[string]interface{})
 	productsPostBody["required"] = true
 	productsPostContent := make(map[string]interface{})
@@ -243,7 +243,7 @@ func generatePaths() map[string]interface{} {
 	prodIdPut := make(map[string]interface{})
 	prodIdPut["summary"] = "Update product (Admin only)"
 	prodIdPut["description"] = "Update product by ID"
-	prodIdPut["security"] = []interface{}{map[string][]string{"BearerAuth": {}}}
+	prodIdPut["security"] = []interface{}{map[string][]string{"CookieAuth": {}}}
 	prodIdPut["parameters"] = prodIdParams
 	prodIdPutBody := make(map[string]interface{})
 	prodIdPutBody["required"] = true
@@ -262,7 +262,7 @@ func generatePaths() map[string]interface{} {
 	prodIdDel := make(map[string]interface{})
 	prodIdDel["summary"] = "Delete product (Admin only)"
 	prodIdDel["description"] = "Delete product by ID"
-	prodIdDel["security"] = []interface{}{map[string][]string{"BearerAuth": {}}}
+	prodIdDel["security"] = []interface{}{map[string][]string{"CookieAuth": {}}}
 	prodIdDel["parameters"] = prodIdParams
 	prodIdDelResp := make(map[string]interface{})
 	prodIdDelResp["204"] = map[string]string{"description": "Product deleted"}
@@ -302,7 +302,6 @@ func generateComponents() map[string]interface{} {
 	loginResp["type"] = "object"
 	loginRespProps := make(map[string]interface{})
 	loginRespProps["user"] = map[string]interface{}{"$ref": "#/components/schemas/User"}
-	loginRespProps["access_token"] = map[string]interface{}{"type": "string"}
 	loginRespProps["expires_in"] = map[string]interface{}{"type": "integer"}
 	loginResp["properties"] = loginRespProps
 	schemas["LoginResponse"] = loginResp
@@ -395,11 +394,11 @@ func generateComponents() map[string]interface{} {
 	
 	// Security schemes
 	securitySchemes := make(map[string]interface{})
-	bearerAuth := make(map[string]interface{})
-	bearerAuth["type"] = "http"
-	bearerAuth["scheme"] = "bearer"
-	bearerAuth["bearerFormat"] = "JWT"
-	securitySchemes["BearerAuth"] = bearerAuth
+	cookieAuth := make(map[string]interface{})
+	cookieAuth["type"] = "apiKey"
+	cookieAuth["in"] = "cookie"
+	cookieAuth["name"] = "access_token"
+	securitySchemes["CookieAuth"] = cookieAuth
 	components["securitySchemes"] = securitySchemes
 	
 	return components

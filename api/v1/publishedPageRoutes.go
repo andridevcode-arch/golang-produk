@@ -7,12 +7,13 @@ import (
 	"go-produk/internal/handlers"
 	"go-produk/internal/middlewares"
 	"go-produk/internal/services"
+	"go-produk/pkg/cookie"
 	"go-produk/pkg/token"
 )
 
-func PublishedPageRoutes(mux *http.ServeMux, service *services.PublishedPageService, tokenMgr *token.Manager, redisClient *database.RedisClient) {
+func PublishedPageRoutes(mux *http.ServeMux, service *services.PublishedPageService, tokenMgr *token.Manager, redisClient *database.RedisClient, cookies cookie.Settings) {
 	h := handlers.NewPublishedPageHandler(service)
-	auth := middlewares.AuthMiddleware(tokenMgr, redisClient)
+	auth := middlewares.AuthMiddleware(tokenMgr, redisClient, cookies)
 	mux.Handle("PUT /api/v1/projects/{id}/page", auth(http.HandlerFunc(h.Upsert)))
 	mux.Handle("GET /api/v1/projects/{id}/page", auth(http.HandlerFunc(h.GetOwner)))
 	mux.Handle("PATCH /api/v1/projects/{id}/page", auth(http.HandlerFunc(h.Update)))

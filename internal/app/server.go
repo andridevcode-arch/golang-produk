@@ -14,6 +14,7 @@ import (
 	v1 "go-produk/api/v1"
 	"go-produk/internal/database"
 	"go-produk/internal/handlers"
+	"go-produk/internal/middlewares"
 )
 
 // SetupRouter membuat HTTP handler dengan route yang terdaftar
@@ -49,6 +50,10 @@ func (a *App) SetupRouter() http.Handler {
 
 	// Middleware: recovery (panic recovery)
 	handler := recoveryMiddleware(mux)
+	// Middleware: proteksi CSRF (validasi Origin/Referer untuk method mutasi)
+	handler = middlewares.CSRFMiddleware(a.Config.AllowedOrigins)(handler)
+	// Middleware: CORS ber-kredensial (berada di luar CSRF agar preflight OPTIONS dibalas lebih dulu)
+	handler = middlewares.CORSMiddleware(a.Config.AllowedOrigins)(handler)
 	// Middleware: request ID
 	handler = requestIDMiddleware(handler)
 	// Middleware: logger

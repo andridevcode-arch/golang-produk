@@ -7,12 +7,13 @@ import (
 	"go-produk/internal/handlers"
 	"go-produk/internal/middlewares"
 	"go-produk/internal/services"
+	"go-produk/pkg/cookie"
 	"go-produk/pkg/token"
 )
 
 // UserRoutes mendaftarkan route user ke mux
-func UserRoutes(mux *http.ServeMux, userSvc *services.UserService, tokenMgr *token.Manager, redisClient *database.RedisClient) {
-	authMW := middlewares.AuthMiddleware(tokenMgr, redisClient)
+func UserRoutes(mux *http.ServeMux, userSvc *services.UserService, tokenMgr *token.Manager, redisClient *database.RedisClient, cookies cookie.Settings) {
+	authMW := middlewares.AuthMiddleware(tokenMgr, redisClient, cookies)
 	userHandler := handlers.NewUserHandler(userSvc)
 
 	// Get current user profile
