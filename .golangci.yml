@@ -1,0 +1,53 @@
+linters:
+  enable:
+    - errcheck # Check for unchecked errors
+    - gosimple # Simplify code
+    - govet # Report suspicious constructs
+    - ineffassign # Detect ineffective assignments
+    - staticcheck # Advanced static analysis
+    - typecheck # Like typechecking
+    - unused # Check for unused code
+    - gocritic # Diagnostic checks
+    - gofmt # Check formatting
+    - misspell # Find misspelled words
+    - revive # Fast, configurable linter
+    - nolintlint # Diagnose ill-formed or insufficient nolint directives
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: false
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+  gofmt:
+    simplify: true
+  revive:
+    rules:
+      - name: redefinition-of-identified-identifier
+      - name: unused-parameter
+      - name: var-naming
+  misspell:
+    locale: US
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files
+    - path: _test\.go
+      linters:
+        - gofmt
+        - revive
+        - unused
+    # Exclude linter warnings for generated files
+    - path: internal/dbgen/
+      linters:
+        - revive
+        - govet
+  max-same-issues: 10
+  max-issues-per-linter: 50
+
+run:
+  timeout: 5m
+  tests: false
+  go: "1.24"

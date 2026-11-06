@@ -1,0 +1,171 @@
+@url = http://localhost:8025
+@admin_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMWU2OWViODEtNzU2OC04NWMxLTA2ZTctNDA4ZGU3NTI3YmVkIiwicm9sZSI6ImFkbWluIiwiZXhwIjoxNzkzMDkwOTM5LCJpYXQiOjE3OTMwMDQ1Mzl9.PT4BrDDxF_IJasp_KFPbvG2-G48en6nqQkvFTH7awos
+
+### Login Admin
+POST {{url}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@go-produk.local",
+  "password": "Admin@123"
+}
+
+### ================= CATEGORIES =================
+
+### Get All Categories (Flat List - Publik)
+GET {{url}}/api/v1/categories
+
+### Get All Categories as Tree Structure (Publik)
+GET {{url}}/api/v1/categories?tree=true
+
+### Get Category By ID (Publik)
+GET {{url}}/api/v1/categories/REPLACE_WITH_UUID
+
+### Create Parent Category (Hanya Admin)
+POST {{url}}/api/v1/categories
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "name": "E-Book",
+  "slug": "e-book",
+  "icon": "book",
+  "description": "Koleksi buku elektronik dan panduan digital",
+  "sort_order": 1,
+  "is_active": true
+}
+
+### Create Sub-Category (Child - Hanya Admin)
+POST {{url}}/api/v1/categories
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "parent_id": "REPLACE_WITH_PARENT_UUID",
+  "name": "Pemrograman",
+  "slug": "pemrograman",
+  "icon": "code",
+  "description": "Buku dan modul tutorial koding",
+  "sort_order": 1,
+  "is_active": true
+}
+
+### Update Category (Hanya Admin)
+PUT {{url}}/api/v1/categories/ae54f49f-020f-4da4-9637-45a86d23cdda
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "name": "E-Book & Panduan Digital",
+  "description": "Koleksi e-book terupdate",
+  "sort_order": 2
+}
+
+### Delete Category (Hanya Admin)
+DELETE {{url}}/api/v1/categories/REPLACE_WITH_UUID
+Authorization: Bearer {{admin_token}}
+
+### ================= PRODUCTS =================
+
+### Get All Products (Publik)
+GET {{url}}/api/v1/products
+
+### Get All Products by Category (Publik)
+GET {{url}}/api/v1/products?category_id=ae54f49f-020f-4da4-9637-45a86d23cdda
+
+### Get Product By ID (Publik)
+GET {{url}}/api/v1/products/REPLACE_WITH_UUID
+
+### Create Product (Hanya Admin)
+POST {{url}}/api/v1/products
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "category_id": "ae54f49f-020f-4da4-9637-45a86d23cdda",
+  "name": "Template Undangan Pernikahan Premium",
+  "slug": "undangan-pernikahan-premium",
+  "description": "Template undangan pernikahan dengan animasi dan fitur lengkap",
+  "price": 150000,
+  "access_type": "premium",
+  "is_active": true,
+  "sort_order": 1
+}
+
+### Update Product (Hanya Admin)
+PUT {{url}}/api/v1/products/REPLACE_WITH_UUID
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "name": "Template Undangan Pernikahan Deluxe",
+  "price": 200000,
+  "description": "Versi deluxe dengan fitur tambahan"
+}
+
+### Delete Product (Hanya Admin)
+DELETE {{url}}/api/v1/products/REPLACE_WITH_UUID
+Authorization: Bearer {{admin_token}}
+
+### ================= TEMPLATES =================
+
+### Get All Templates (Publik)
+GET {{url}}/api/v1/templates
+
+### Create Template (Hanya Admin)
+POST {{url}}/api/v1/templates
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "product_id": "REPLACE_WITH_PRODUCT_UUID",
+  "name": "Undangan Elegant",
+  "slug": "undangan-elegant",
+  "preview_url": "https://example.com/previews/undangan-elegant",
+  "thumbnail_url": "https://example.com/images/undangan-elegant.png",
+  "is_premium": true,
+  "is_active": true,
+  "sort_order": 1,
+  "config_schema": {
+    "theme": "elegant",
+    "sections": ["cover", "event", "gallery"]
+  }
+}
+
+### Update Template (Hanya Admin)
+PUT {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "name": "Undangan Elegant Deluxe",
+  "is_active": true
+}
+
+### Delete Template (Hanya Admin)
+DELETE {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID
+Authorization: Bearer {{admin_token}}
+
+### ================= TEMPLATE VERSIONS =================
+
+### Create Template Version (Hanya Admin)
+POST {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID/versions
+Content-Type: application/json
+Authorization: Bearer {{admin_token}}
+
+{
+  "version": "1.0.0",
+  "is_active": true,
+  "config_schema": {
+    "theme": "elegant",
+    "sections": ["cover", "event", "gallery"]
+  }
+}
+
+### Activate Template Version (Hanya Admin)
+PATCH {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID/versions/REPLACE_WITH_VERSION_UUID/active
+Authorization: Bearer {{admin_token}}
+
+### Delete Template Version (Hanya Admin)
+DELETE {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID/versions/REPLACE_WITH_VERSION_UUID
+Authorization: Bearer {{admin_token}}

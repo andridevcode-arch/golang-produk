@@ -1,0 +1,193 @@
+@url = http://localhost:8025
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDY3NDI5YTQtYjcwNS1kNzYyLWQxM2ItYmRlOWIzOWVlNzI0Iiwicm9sZSI6InVzZXIiLCJleHAiOjE3OTMwOTA5NzksImlhdCI6MTc5MzAwNDU3OX0.66N9__pPm-_UTDppEvmv7AkqZgBErBNr2s3UYnJBWJQ
+
+### Root
+GET {{url}}/
+
+### Health Check
+GET {{url}}/health
+
+### ================= AUTH =================
+
+### Register User
+POST {{url}}/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Login User
+POST {{url}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Logout dengan Token (akan memblacklist token di Redis)
+POST {{url}}/api/v1/auth/logout
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### ================= USERS =================
+
+### Get Profile
+GET {{url}}/api/v1/users/me
+Authorization: Bearer {{token}}
+
+### Update Profile
+PUT {{url}}/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Andri Anto",
+  "username": "andri-anto",
+  "display_name": "Andri Fullstack",
+  "phone": "08123456789",
+  "bio": "Backend & Cloud Engineer",
+  "avatar_url": "https://example.com/avatar.png",
+  "location": "Jakarta, Indonesia"
+}
+
+### Profile tanpa token
+GET {{url}}/api/v1/users/me
+
+### Login dengan akun nonaktif (is_active = false)
+POST {{url}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "blocked@example.com",
+  "password": "password123"
+}
+
+### ================= CATEGORIES (Publik) =================
+
+### Get All Categories (Flat List)
+GET {{url}}/api/v1/categories
+
+### Get All Categories as Tree Structure
+GET {{url}}/api/v1/categories?tree=true
+
+### Get Category By ID
+GET {{url}}/api/v1/categories/REPLACE_WITH_UUID
+
+### ================= PRODUCTS (Publik) =================
+
+### Get All Products
+GET {{url}}/api/v1/products
+
+### Get All Products by Category
+GET {{url}}/api/v1/products?category_id=REPLACE_WITH_UUID
+
+### Get Product By ID
+GET {{url}}/api/v1/products/REPLACE_WITH_UUID
+
+### ================= TEMPLATES (Publik) =================
+
+### Get All Templates
+GET {{url}}/api/v1/templates
+
+### Get Templates by Product
+GET {{url}}/api/v1/templates?product_id=REPLACE_WITH_PRODUCT_UUID
+
+### Get Template By ID
+GET {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID
+
+### ================= TEMPLATE VERSIONS (Publik) =================
+
+### Get Template Versions
+GET {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID/versions
+
+### Get Template Version By ID
+GET {{url}}/api/v1/templates/REPLACE_WITH_TEMPLATE_UUID/versions/REPLACE_WITH_VERSION_UUID
+
+### ================= PROJECTS (Login) =================
+
+### Create Project (otomatis memakai template version aktif)
+POST {{url}}/api/v1/projects
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "template_id": "REPLACE_WITH_TEMPLATE_UUID",
+  "title": "Undangan Pernikahan Andri & Sinta",
+  "description": "Draft undangan digital"
+}
+
+### Get My Projects
+GET {{url}}/api/v1/projects
+Authorization: Bearer {{token}}
+
+### Get My Projects by Status
+GET {{url}}/api/v1/projects?status=draft
+Authorization: Bearer {{token}}
+
+### Get My Project Detail
+GET {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID
+Authorization: Bearer {{token}}
+
+### Update My Project
+PATCH {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Undangan Pernikahan Andri & Sinta - Revisi",
+  "description": "Draft yang telah diperbarui"
+}
+
+### Archive My Project
+PATCH {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "archived"
+}
+
+### Setup Public Page
+PUT {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID/page
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "slug": "undangan-andri-sinta",
+  "allow_preview": false
+}
+
+### Get My Public Page
+GET {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID/page
+Authorization: Bearer {{token}}
+
+### Update Public Page
+PATCH {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID/page
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "allow_preview": true
+}
+
+### Publish Public Page
+POST {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID/page/publish
+Authorization: Bearer {{token}}
+
+### Unpublish Public Page
+POST {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID/page/unpublish
+Authorization: Bearer {{token}}
+
+### Public Page
+GET {{url}}/andri-anto/undangan-andri-sinta
+
+### Public Page Preview dengan Token
+GET {{url}}/andri-anto/undangan-andri-sinta/preview?preview_token=REPLACE_WITH_PREVIEW_TOKEN
+
+### Delete My Project (diarsipkan, tidak dihapus permanen)
+DELETE {{url}}/api/v1/projects/REPLACE_WITH_PROJECT_UUID
+Authorization: Bearer {{token}}

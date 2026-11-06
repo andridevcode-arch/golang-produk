@@ -1,0 +1,63 @@
+# === Dokumentasi Markdown (tidak ikut di-commit) ===
+*.md
+!LICENSE
+
+# === Environment & Secret ===
+.env
+.env.*
+!.env.example
+
+# === Binary hasil build ===
+/bin/
+/build/
+/dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.o
+*.a
+
+# === Go ===
+vendor/
+go.work
+go.work.sum
+
+# === Coverage & Profiling ===
+*.cover
+*.coverprofile
+coverage.out
+coverage.html
+*.prof
+*.pprof
+
+# === File Sementara & Backup ===
+*.bak
+*.tmp
+*.temp
+*.log
+*.swp
+*.swo
+*~
+
+# === IDE & Editor ===
+.idea/
+.vscode/
+*.iml
+state.vscdb
+state.vscdb.backup
+.cursor/
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Cache & Tools ===
+.cache/
+.golangci-lint-cache/
+tmp/
+
+.bak
